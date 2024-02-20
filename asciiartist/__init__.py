@@ -144,14 +144,14 @@ def _get_edges(
     nx = pw*width
     img = np.array(
         Image.fromarray((img.astype(float)*255).astype(np.uint8))
-        .resize((int(nx//weight+.5), int(ny//weight+.5)), Image.CUBIC),
+        .resize((int(nx//weight+.5), int(ny//weight+.5)), Image.BICUBIC),
         dtype=np.uint8)
 
     edges = feature.canny(img, sigma=sigma) \
         [3:-3,3:-3] # Remove border (scikit-image bug)
     edges = np.array(
         Image.fromarray(edges)
-        .resize((nx, ny), Image.CUBIC)
+        .resize((nx, ny), Image.BICUBIC)
     ).astype(np.float32)
     edges = edges.reshape(*edges.shape, 1)
 

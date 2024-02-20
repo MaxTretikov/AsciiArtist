@@ -35,7 +35,7 @@ class DataGen:
     def __init__(self, fz: int, font_path: str, chars: str, pad: int, batch_size: int, ratio: int = 2.5):
 
         self.fz = fz
-        self.font = ImageFont.truetype(font_path, self.fz)
+        self.font = ImageFont.load_default()
         self.chars = chars
         self.pad = pad
         self.ratio = ratio
@@ -61,12 +61,11 @@ class DataGen:
         self.onehot = LabelBinarizer().fit([*self.chars])
 
     def _char2img(self, c: str):
-
         X, Y = int((self.fz+self.pad)/self.ratio+.5), self.fz+self.pad
-        #X,Y = self.fz+self.pad, int((self.fz+self.pad)*self.ratio + .5)
         img = Image.new("RGB", (X, Y), (0, 0, 0))
         draw = ImageDraw.Draw(img)
-        w, h = draw.textsize(c, font=self.font)
+        w = draw.textlength(c, font=self.font)
+        h = self.fz  # As an approximation, considering the font size for height. May need adjustment.
         draw.text(((X-w)//2, (Y-h)//2), c, (255, 255, 255), font=self.font)
         return img
 
@@ -141,6 +140,8 @@ def main():
     os.path.dirname(__file__)
 
     FONT_SIZE = 35
+
+    # not at all portable
     FONT_PATH = r"fonts\consola.ttf"
     import string
     CHARS = string.printable[:-5]
@@ -149,6 +150,9 @@ def main():
     dg = DataGen(FONT_SIZE, FONT_PATH, CHARS, PAD, 64)
     model = ASCIIModel(dg)
     model.print_report()
+
+    # the repo name has capitals!!!
+    # and!!!! gen/ isn't even ensured to exist earlier!!!!!!
     model.save("../asciiartist/gen/")
 
 
