@@ -48,8 +48,9 @@ def _model_predict(X:"np.ndarray[np.bool]", _model=[]
 
         import tflite_runtime.interpreter as tflite
 
+        # TODO: no
         interpreter = tflite.Interpreter(
-            model_path=os.path.join(dir, "gen/ascii-model.tflite"))
+            model_path=os.path.join(dir, "../gen/ascii-model.tflite"))
         m_out = interpreter.get_output_details()[0]
         m_in = interpreter.get_input_details()[0]
         
@@ -58,9 +59,11 @@ def _model_predict(X:"np.ndarray[np.bool]", _model=[]
         interpreter.resize_tensor_input(
             m_out['index'], (batch_size, *m_out["shape"][1:]))
         interpreter.allocate_tensors()
+
+        # TODO: second no
         _model.append((
             interpreter,
-            [*open(os.path.join(dir, "gen/_onehot.txt"), "rb").read()],
+            [*open(os.path.join(dir, "../gen/_onehot.txt"), "rb").read()],
             (m_out, m_in)
         ))
 
